@@ -45,8 +45,33 @@ def move_folder(input_dir, destination_folder):
     except FileNotFoundError:
         print("Erreur : dossier introuvable")
 
+def copy_file(input_file, destination_folder):
+    try:
+        os.makedirs(destination_folder, exist_ok=True)
+        shutil.copy(input_file, destination_folder)
+        print(f"Le fichier {input_file} a bien été copié dans le dossier {destination_folder}")
+
+    except FileNotFoundError:
+        print("Erreur : fichier introuvable")
+
+def remove_file(input_file):
+    try:
+        os.remove(input_file)
+        print(f"Le fichier {input_file} a bien été supprimé")
+
+    except FileNotFoundError:
+        print("Erreur : fichier introuvable")
+
+def remove_folder(input_dir):
+    try:
+        shutil.rmtree(input_dir)
+        print(f"Le dossier {input_dir} a bien été supprimé")
+
+    except FileNotFoundError:
+        print("Erreur : dossier introuvable")
+
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Permet de faire toute sorte d\'opérations sur des fichiers et des dossiers')
     parser.add_argument('--input_file', metavar='file', help='Nom du fichier d\'entrée')
     parser.add_argument('--output_file', metavar='file', help='Nom du fichier de sortie')
     parser.add_argument('--input_dir', metavar='dir', help='Nom du dossier d\'entrée')
@@ -54,7 +79,8 @@ def main():
     parser.add_argument('--rename', action='store_true', help='Renomme un fichier ou un dossier')
     parser.add_argument('--dir_content', action='store_true', help='Liste le contenant d\'un dossier')
     parser.add_argument('--move', action='store_true', help='Déplace un fichier ou un dossier')
-    parser.add_argument('--sort_by_extension', action='store_true', help='Trie les fichiers et dossiers d\'un dossier')
+    parser.add_argument('--copy', action='store_true', help='Créée une copie d\'un fichier ou d\'un dossier')
+    parser.add_argument('--remove', action='store_true', help='Supprime un fichier ou un dossier')
 
     args = parser.parse_args()
 
@@ -71,26 +97,16 @@ def main():
         move_file(args.input_file, args.output_dir)
 
     if args.input_dir and args.output_dir and args.move:
-        move_file(args.input_dir, args.output_dir)
+        move_folder(args.input_dir, args.output_dir)
+
+    if args.input_file and args.output_dir and args.copy:
+        copy_file(args.input_file, args.output_dir)
+
+    if args.input_file and args.remove:
+        remove_file(args.input_file)
+
+    if args.input_dir and args.remove:
+        remove_folder(args.input_dir)
 
 if __name__ == "__main__":
     main()
-
-"""
-input_dir = os.path.abspath(args.input_dir)
-    output_dir = os.path.abspath(args.output_dir)
-
-    dir_content = os.listdir(input_dir)
-
-    if args.sort_by_extension and args.input_dir and args.output_dir:
-        for element in dir_content:
-            split_element = element.split('.')
-
-            if len(split_element) > 1:
-                extension = split_element[1]
-                element_path = os.path.join(input_dir, element)
-                folder = os.path.join(output_dir, extension)
-
-                os.makedirs(folder, exist_ok=True)
-                shutil.move(element_path, os.path.join(folder, element))
-"""
