@@ -2,7 +2,16 @@ import argparse
 import os
 import shutil
 
+
 def rename_file(old_name, new_name):
+    """
+    :pre:
+    - Le nom du fichier a renommer
+    - Le nouveau nom du fichier
+    :post:
+    - Renomme le fichier avec le nouveau nom et affiche un message de succès de l'opération
+    - Affiche un message d'erreur si il ne trouve pas le fichier
+    """
     try:
         os.rename(old_name, new_name)
         print(f"Le fichier {old_name} a bien été renommé {new_name}")
@@ -10,7 +19,16 @@ def rename_file(old_name, new_name):
     except FileNotFoundError:
         print("Erreur : fichier introuvable")
 
+
 def rename_folder(old_name, new_name):
+    """
+    :pre:
+    - Le nom du dossier a renommer
+    - Le nouveau nom du dossier
+    :post:
+    - Renomme le dossier avec le nouveau nom et affiche un message de succès de l'opération
+    - Affiche un message d'erreur si il ne trouve pas le dossier
+    """
     try:
         os.rename(old_name, new_name)
         print(f"Le dossier {old_name} a bien été renommé {new_name}")
@@ -18,7 +36,15 @@ def rename_folder(old_name, new_name):
     except FileNotFoundError:
         print("Erreur : dossier introuvable")
 
+
 def list_content(input_dir):
+    """
+    :pre:
+    - Le nom du dossier
+    :post:
+    - Affiche le contenu du dossier
+    - Affiche un message d'erreur si il ne trouve pas le dossier
+    """
     try:
         dir_content = os.listdir(input_dir)
         for element in dir_content:
@@ -27,7 +53,16 @@ def list_content(input_dir):
     except FileNotFoundError:
         print("Erreur : dossier introuvable")
 
+
 def move_file(input_file, destination_folder):
+    """
+    :pre:
+    - Le nom du fichier a déplacer
+    - Le nom du dossier où le fichier sera déplacé
+    :post:
+    - Déplace le fichier dans le dossier et affiche un message de succès de l'opération
+    - Affiche un message d'erreur si il ne trouve pas le fichier
+    """
     try:
         os.makedirs(destination_folder, exist_ok=True)
         shutil.move(input_file, destination_folder)
@@ -36,7 +71,16 @@ def move_file(input_file, destination_folder):
     except FileNotFoundError:
         print("Erreur : fichier introuvable")
 
+
 def move_folder(input_dir, destination_folder):
+    """
+    :pre:
+    - Le nom du dossier a déplacer
+    - Le nom du dossier où le dossier sera déplacé
+    :post:
+    - Déplace le dossier dans le dossier et affiche un message de succès de l'opération
+    - Affiche un message d'erreur si il ne trouve pas le dossier
+    """
     try:
         os.makedirs(destination_folder, exist_ok=True)
         shutil.move(input_dir, destination_folder)
@@ -45,7 +89,16 @@ def move_folder(input_dir, destination_folder):
     except FileNotFoundError:
         print("Erreur : dossier introuvable")
 
+
 def copy_file(input_file, destination_folder):
+    """
+    :pre:
+    - Le nom du fichier a copier
+    - Le nom du dossier où le fichier sera copié
+    :post:
+    - Créée une copie du fichier dans le dossier et affiche un message de succès de l'opération
+    - Affiche un message d'erreur si il ne trouve pas le fichier
+    """
     try:
         os.makedirs(destination_folder, exist_ok=True)
         shutil.copy(input_file, destination_folder)
@@ -54,7 +107,15 @@ def copy_file(input_file, destination_folder):
     except FileNotFoundError:
         print("Erreur : fichier introuvable")
 
+
 def remove_file(input_file):
+    """
+    :pre:
+    - Le nom du fichier a supprimer
+    :post:
+    - Supprime le fichier et affiche un message de succès de l'opération
+    - Affiche un message d'erreur si il ne trouve pas le fichier
+    """
     try:
         os.remove(input_file)
         print(f"Le fichier {input_file} a bien été supprimé")
@@ -62,13 +123,22 @@ def remove_file(input_file):
     except FileNotFoundError:
         print("Erreur : fichier introuvable")
 
+
 def remove_folder(input_dir):
+    """
+    :pre:
+    - Le nom du dossier a supprimer
+    :post:
+    - Supprime le dossier et affiche un message de succès de l'opération
+    - Affiche un message d'erreur si il ne trouve pas le dossier
+    """
     try:
         shutil.rmtree(input_dir)
         print(f"Le dossier {input_dir} a bien été supprimé")
 
     except FileNotFoundError:
         print("Erreur : dossier introuvable")
+
 
 def main():
     parser = argparse.ArgumentParser(description='Permet de faire toute sorte d\'opérations sur des fichiers et des dossiers')
@@ -79,7 +149,7 @@ def main():
     parser.add_argument('--rename', action='store_true', help='Renomme un fichier ou un dossier')
     parser.add_argument('--dir_content', action='store_true', help='Liste le contenant d\'un dossier')
     parser.add_argument('--move', action='store_true', help='Déplace un fichier ou un dossier')
-    parser.add_argument('--copy', action='store_true', help='Créée une copie d\'un fichier ou d\'un dossier')
+    parser.add_argument('--copy', action='store_true', help='Créée une copie d\'un fichier dans un dossier')
     parser.add_argument('--remove', action='store_true', help='Supprime un fichier ou un dossier')
 
     args = parser.parse_args()
@@ -107,6 +177,7 @@ def main():
 
     if args.input_dir and args.remove:
         remove_folder(args.input_dir)
+
 
 if __name__ == "__main__":
     main()
