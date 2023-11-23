@@ -2,6 +2,9 @@ import argparse
 import os
 import shutil
 
+index_error_message = "\nErreur : argument manquant\n"
+file_not_found_error_message = "\nErreur : fichier/dossier introuvable\n"
+
 
 def rename_item(old_name, new_name):
     """
@@ -23,10 +26,10 @@ def rename_item(old_name, new_name):
             file_or_folder = 'dossier'
 
         os.rename(old_name, new_name)
-        print(f"Le {file_or_folder} {old_name} a bien été renommé {new_name}")
+        print(f"\nLe {file_or_folder} {old_name} a bien été renommé {new_name}\n")
 
     except FileNotFoundError:
-        print(f"Erreur : fichier/dossier introuvable")
+        print(file_not_found_error_message)
 
 
 def list_content(folder):
@@ -45,9 +48,9 @@ def list_content(folder):
             print(element)
 
     except FileNotFoundError:
-        print("Erreur : dossier introuvable")
+        print(file_not_found_error_message)
     except NotADirectoryError:
-        print("Erreur : ceci n'est pas un dossier")
+        print("\nErreur : ceci n'est pas un dossier\n")
 
 
 def move_item(input_item, destination_folder):
@@ -71,29 +74,10 @@ def move_item(input_item, destination_folder):
 
         os.makedirs(destination_folder, exist_ok=True)
         shutil.move(input_item, destination_folder)
-        print(f"Le {file_or_folder} {input_item} a bien été déplacé dans le dossier {destination_folder}")
+        print(f"\nLe {file_or_folder} {input_item} a bien été déplacé dans le dossier {destination_folder}\n")
 
     except FileNotFoundError:
-        print("Erreur : fichier/dossier introuvable")
-
-
-def copy_item(input_item, destination_folder):
-    """
-    :pre:
-    - Le nom du fichier a copier
-    - Le nom du dossier où le fichier sera copié
-    :post:
-    - Créée une copie du fichier dans le dossier et affiche un message de succès de l'opération
-    :raises:
-    - Affiche un message d'erreur si il ne trouve pas le fichier
-    """
-    try:
-        os.makedirs(destination_folder, exist_ok=True)
-        shutil.copy(input_item, destination_folder)
-        print(f"Le fichier {input_item} a bien été copié dans le dossier {destination_folder}")
-
-    except FileNotFoundError:
-        print("Erreur : fichier introuvable")
+        print(file_not_found_error_message)
 
 
 def remove_item(input_item):
@@ -116,38 +100,60 @@ def remove_item(input_item):
             file_or_folder = 'dossier'
             shutil.rmtree(input_item)
 
-        print(f"Le {file_or_folder} {input_item} a bien été supprimé")
+        print(f"\nLe {file_or_folder} {input_item} a bien été supprimé\n")
 
     except FileNotFoundError:
-        print("Erreur : fichier/dossier introuvable")
+        print(file_not_found_error_message)
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Permet de faire toute sorte d\'opérations sur des fichiers et des dossiers')
-    parser.add_argument('--input', metavar='file/dir', help='Nom du fichier/dossier d\'entrée')
-    parser.add_argument('--output', metavar='file/dir', help='Nom du fichier/dossier de sortie')
-    parser.add_argument('--rename', action='store_true', help='Renomme un fichier ou un dossier')
-    parser.add_argument('--dir_content', action='store_true', help='Liste le contenant d\'un dossier')
-    parser.add_argument('--move', action='store_true', help='Déplace un fichier ou un dossier')
-    parser.add_argument('--copy', action='store_true', help='Créée une copie d\'un fichier dans un dossier')
-    parser.add_argument('--remove', action='store_true', help='Supprime un fichier ou un dossier')
+    command = ''
+    start_message = ('\nVoici les commandes existantes :\n'
+                     '- dir -> affiche le contenu du répertoire\n'
+                     '- rename -> renomme un fichier/dossier\n'
+                     '- move -> déplace un fichier/dossier dans un autre dossier\n'
+                     '- remove -> supprime un fichier/dossier\n')
 
-    args = parser.parse_args()
+    print(start_message)
 
-    if args.input and args.output and args.rename:
-        rename_item(args.input, args.output)
+    while command != 'exit':
+        command = input("Entrez une commande ou 'exit' pour quitter le programme : ")
+        arguments = command.split()
 
-    if args.input and args.dir_content:
-        list_content(args.input)
+        try:
+            if arguments[0] == 'exit':
+                print("\nVous avez quitté le programme\n")
 
-    if args.input and args.output and args.move:
-        move_item(args.input, args.output)
+            elif arguments[0] == 'dir':
+                try:
+                    list_content(arguments[1])
+                except IndexError:
+                    print(index_error_message)
 
-    if args.input and args.output and args.copy:
-        copy_item(args.input, args.output)
+            elif arguments[0] == 'rename':
+                try:
+                    rename_item(arguments[1], arguments[2])
+                except IndexError:
+                    print(index_error_message)
 
-    if args.input and args.remove:
-        remove_item(args.input)
+            elif arguments[0] == 'move':
+                try:
+                    move_item(arguments[1], arguments[2])
+                except IndexError:
+                    print(index_error_message)
+
+            elif arguments[0] == 'remove':
+                try:
+                    remove_item(arguments[1])
+                except IndexError:
+                    print(index_error_message)
+
+            else:
+                print("\nCette commande n'est pas disponible")
+                print(start_message)
+
+        except IndexError:
+            print("\nVous n'avez entré aucune commande\n")
 
 
 if __name__ == "__main__":
